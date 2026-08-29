@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Lý Lịch Học</title>
+    <link rel="icon" type="image/jpg" href="calendar-icon.jpg">
 
     <!-- PWA / iOS Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -451,7 +452,7 @@
         let selectedColor = COLOR_PALETTE[0].hex;
         let courseToDeleteId = null;
         let isMonthView = true;
-        let currentTheme = localStorage.getItem('theme') || 'light';
+        let currentTheme = 'light'; // Luôn mặc định là chế độ sáng khi load
         let touchStartX = 0;
         let touchEndX = 0;
 
@@ -629,7 +630,7 @@
                 label.className = 'cursor-pointer p-0.5 flex-shrink-0 hover:scale-110 transition-transform';
                 label.innerHTML = `
                     <input type="radio" name="colorOption" value="${col.hex}" class="peer hidden" ${index === 0 ? 'checked' : ''}>
-                    <div class="w-7 h-7 rounded-full flex items-center justify-center transition-all peer-checked:ring-2 peer-checked:ring-slate-800 dark:peer-checked:ring-slate-200 peer-checked:ring-offset-2 peer-checked:scale-110" style="background-color: ${col.hex}">
+                    <div class="w-7 h-7 rounded-full flex items-center justify-center transition-all peer-checked:ring-2 peer-checked:ring-black dark:peer-checked:ring-white peer-checked:ring-offset-1 peer-checked:scale-110" style="background-color: ${col.hex}">
                         <i data-lucide="check" class="w-4 h-4 text-white opacity-0 peer-checked:opacity-100"></i>
                     </div>
                 `;
