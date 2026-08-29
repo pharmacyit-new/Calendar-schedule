@@ -109,7 +109,7 @@
     </header>
 
     <!-- Floating Action Button for Mobile -->
-    <button id="mobileFabBtn" aria-label="Thêm lịch học" class="sm:hidden fixed bottom-16 right-3 w-14 h-14 bg-indigo-600 dark:bg-indigo-500 text-white rounded-full shadow-2xl flex items-center justify-center z-40 active:scale-90 transition-transform focus:outline-none border-2 border-white dark:border-slate-800">
+    <button id="mobileFabBtn" aria-label="Thêm lịch học" class="sm:hidden fixed bottom-16 right-3 w-14 h-14 bg-indigo-600 dark:bg-indigo-500 text-white active:scale-90 rounded-full shadow-2xl flex items-center justify-center z-40 transition-transform focus:outline-none border-2 border-white dark:border-slate-800">
         <i data-lucide="plus" class="w-7 h-7"></i>
     </button>
 
@@ -960,7 +960,7 @@
 
             setTimeout(() => { 
                 // Tránh tự động focus trên điện thoại để không làm bàn phím ảo bật lên gây lỗi giao diện trắng form
-                if (window.innerWidth >= 400) {
+                if (window.innerWidth >= 640) {
                     document.getElementById('subjectName').focus(); 
                 } 
             }, 100);
