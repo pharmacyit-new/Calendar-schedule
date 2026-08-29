@@ -11,7 +11,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Lịch Học">
     <link rel="apple-touch-icon" href="calendar.png">
-    <meta name="theme-color" content="#4f46e5" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0eb2fd" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
 
     <!-- Tailwind CSS CDN -->
@@ -28,7 +28,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body {
             font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent; /* Xóa highlight khi tap trên mobile */
+            
         }
         
         /* Custom Scrollbar */
@@ -109,7 +109,7 @@
     </header>
 
     <!-- Floating Action Button for Mobile -->
-    <button id="mobileFabBtn" aria-label="Thêm lịch học" class="sm:hidden fixed bottom-6 right-3 w-14 h-14 bg-indigo-600 dark:bg-indigo-500 text-white rounded-full shadow-2xl flex items-center justify-center z-40 active:scale-90 transition-transform focus:outline-none border-2 border-white dark:border-slate-800">
+    <button id="mobileFabBtn" aria-label="Thêm lịch học" class="sm:hidden fixed bottom-16 right-3 w-14 h-14 bg-indigo-600 dark:bg-indigo-500 text-white rounded-full shadow-2xl flex items-center justify-center z-40 active:scale-90 transition-transform focus:outline-none border-2 border-white dark:border-slate-800">
         <i data-lucide="plus" class="w-7 h-7"></i>
     </button>
 
@@ -205,7 +205,7 @@
     </main>
 
     <div id="courseModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4 transition-all duration-300 opacity-0">
-        <div id="courseModalContent" class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden transform transition-all duration-300 scale-95 my-auto border border-slate-100 dark:border-slate-800">
+        <div id="courseModalContent" class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-[95%] sm:w-full max-w-lg max-h-[80vh] flex flex-col overflow-hidden transform transition-all duration-300 scale-95 my-auto border border-slate-100 dark:border-slate-800">
             <!-- Modal Header -->
             <div class="bg-indigo-600 dark:bg-slate-800 px-5 py-4 sm:px-6 text-white flex justify-between items-center shrink-0 border-b border-transparent dark:border-slate-700">
                 <h3 id="modalTitle" class="text-lg sm:text-lg font-bold">Thêm Môn Học Mới</h3>
@@ -455,6 +455,7 @@
         let currentTheme = 'light'; // Luôn mặc định là chế độ sáng khi load
         let touchStartX = 0;
         let touchEndX = 0;
+        let modalTimeout; // Biến lưu timeout để fix lỗi mở form nhanh
 
         const calendarGrid = document.getElementById('calendarGrid');
         const currentMonthYearEl = document.getElementById('currentMonthYear');
@@ -829,7 +830,7 @@
                 dayScheduleList.innerHTML = `
                     <div class="text-center py-10 text-slate-400 dark:text-slate-500 animate-fade-in">
                         <i data-lucide="calendar-x" class="w-14 h-14 mx-auto mb-3 opacity-40"></i>
-                        <p class="text-sm font-medium">Không có lịch học cho ngày này</p>
+                        <p class="text-ml font-medium">Không có lịch học cho ngày này</p>
                     </div>
                 `;
                 lucide.createIcons();
@@ -858,22 +859,20 @@
                     <div class="flex-grow">
                         <h4 class="font-bold text-slate-800 dark:text-slate-100 text-base sm:text-lg">${course.name}</h4>
                         <div class="flex flex-col gap-2 text-sm text-slate-600 dark:text-slate-300 mt-2.5">
-                            <span class="flex items-center gap-2">
-                                <i data-lucide="clock" class="w-4 h-4 text-slate-400 dark:text-slate-500"></i>
-                                <span class="font-medium">${course.startTime} - ${course.endTime}</span>
+                            <span class="flex items-center gap-1.5 opacity-90">
+                                <i data-lucide="calendar-range" class="w-3.5 h-3.5 text-slate-400"></i>
+                                Từ ${formatDateDisplay(course.startDate)} đến ${formatDateDisplay(course.endDate)}
                             </span>
-                            <div class="flex flex-wrap gap-y-2 gap-x-4">
+                            <span class="flex items-center gap-1.5 opacity-90">
+                                <i data-lucide="clock" class="w-3.5 h-3.5 text-slate-400 dark:text-slate-400"></i>
+                                <span>${course.startTime} - ${course.endTime}</span>
+                            </span>                                
+                            ${course.location ? `
                                 <span class="flex items-center gap-1.5 opacity-90">
-                                    <i data-lucide="calendar-range" class="w-3.5 h-3.5 text-slate-400"></i>
-                                    Từ ${formatDateDisplay(course.startDate)} đến ${formatDateDisplay(course.endDate)}
+                                    <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400"></i>
+                                    ${course.location}
                                 </span>
-                                ${course.location ? `
-                                    <span class="flex items-center gap-1.5 opacity-90">
-                                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400"></i>
-                                        ${course.location}
-                                    </span>
-                                ` : ''}
-                            </div>
+                            ` : ''}
                         </div>
                     </div>
                 `;
@@ -927,7 +926,7 @@
                         <span class="w-3 h-3 rounded-full flex-shrink-0 shadow-sm" style="background-color: ${course.color}"></span>
                         <div class="truncate">
                             <p class="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">${course.name}</p>
-                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">${daysText} &bull; ${timesText}</p>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">${daysText} | ${timesText}</p>
                         </div>
                     </div>
                     <div class="flex items-center space-x-1 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
@@ -959,7 +958,12 @@
                 content.classList.add('scale-100');
             }, 10);
 
-            setTimeout(() => { document.getElementById('subjectName').focus(); }, 100);
+            setTimeout(() => { 
+                // Tránh tự động focus trên điện thoại để không làm bàn phím ảo bật lên gây lỗi giao diện trắng form
+                if (window.innerWidth >= 400) {
+                    document.getElementById('subjectName').focus(); 
+                } 
+            }, 100);
         }
 
         function closeModal() {
